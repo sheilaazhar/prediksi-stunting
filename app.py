@@ -1,7 +1,6 @@
 #Library
 import streamlit as st
 from PIL import Image
-import streamlit.components.v1 as components
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -9,6 +8,7 @@ import matplotlib.pyplot as plt
 import keras
 from keras.models import Sequential
 from keras.layers import LSTM, Dense, Dropout
+from keras.models import load_model
 
 from numpy.random import seed
 seed(12345)
@@ -16,9 +16,9 @@ import tensorflow as tf
 tf.random.set_seed(12345) 
 from tensorflow import keras
 import tensorflow.keras.backend as K
-from tensorflow.keras.optimizers import Adam, Nadam, RMSprop, SGD, Adadelta, Adagrad
+from tensorflow.keras.optimizers import Adam, Nadam, RMSprop
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-from sklearn.model_selection import KFold, cross_validate
+from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.preprocessing import MinMaxScaler, FunctionTransformer
 from sklearn.impute import SimpleImputer
@@ -26,7 +26,6 @@ from imblearn.over_sampling import SMOTE
 from scikeras.wrappers import KerasClassifier
 from imblearn.pipeline import Pipeline as imbpipeline
 from pickle import load, dump
-from keras.models import load_model
 
 st.set_page_config(page_title="Prediksi Stunting",layout='wide', page_icon=':rocket:')
 st.markdown('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">',unsafe_allow_html=True)
@@ -60,7 +59,10 @@ if choice == "Home":
     with img3:
         st.write(' ')
     st.markdown('''
-    <p align = "justify">Stunting atau gagal tumbuh merupakan kondisi dimana anak usia 0 – 60 bulan mengalami gangguan pertumbuhan, sehingga anak tersebut memiliki tinggi badan yang tidak sesuai dengan umurnya. Kondisi stunting pada anak dapat diukur dari nilai tinggi badan yang lebih dari -2 (minus dua) standar deviasi median berdasarkan standar pertumbuhan anak dari WHO atau yang disebut nilai z-score </p>
+    <p align = "justify">Stunting telah lama menjadi isu prioritas nasional akibat tingginya prevalensi stunting di Indonesia. Berdasarkan data Riskesdas, angka stunting di Indonesia memang telah mengalami penurunan dari tahun ke tahun, yaitu dari 37,2 persen (2013), 30,8 persen (2018), 27,7 persen (2019), dan menjadi 24,4 persen (2021). Namun angka ini masih jauh dari total presentase standar World Health Organization (WHO), yaitu maksimal 20 persen. Sehingga pemerintah memiliki target menurunkan angka stunting menjadi 14% di tahun 2024.
+Penelitian ini bertujuan untuk membuat model yang dapat memprediksi stunting pada balita yang diharapkan dapat membantu untuk mencegah terjadinya stunting. Dalam memprediksi stunting, digunakan sebuah algoritma deep learning, yaitu Long Short Term Memory (LSTM).
+Data yang digunakan pada penelitian ini diambil dari data Indonesia Family Life Survey (IFLS) gelombang 1, 3, 4, dan 5. Untuk menghasilkan model yang optimal, dilakukan pengujian hyperparameter pada jumlah lapisan LSTM sebanyak 1, 2, dan 3 lapis. Lalu jumlah unit LSTM sebanyak 16, 32, dan 64. Pengujian tersebut menghasilkan model paling optimal dengan jumlah lapisan LSTM sebanyak 1 lapis, jumlah unit LSTM sebanyak 32, optimizer RMSprop, activation sigmoid, learning rate 0.001, dropout 0.5, batch size 32, dan max epoch 100. Model LSTM dievaluasi menggunakan 10-fold cross validation dan menghasilkan rata-rata f1-score 76,22%.
+</p>
     ''',unsafe_allow_html=True)
 
     st.markdown(
@@ -379,9 +381,9 @@ elif choice == "Prediksi":
         
         dataframe = pd.DataFrame()
 
-        jk_opt = {9999:"", 1: "Laki-Laki", 0: "Perempuan"}
+        jk_opt = {9999:"", "1": "Laki-Laki", "3": "Perempuan"}
         satuanm_opt = {9999:"", 3: "Hari", 4: "Minggu", 5: "Bulan"}
-        iyatidak_opt = {9999:"", 1: "Iya", 0: "Tidak"}
+        iyatidak_opt = {9999:"", 1: "Iya", 3: "Tidak"}
         pend_opt = {9999:"", 1:"Tidak sekolah", 2:"SD", 3:"SMP", 4:"SMP Kejuruan", 5:"SMA", 6:"SMK", 11:"Pendidikan A", 12:"Pendidikan B", 13:"Universitas terbuka", 14:"Pesantren", 15:"Pendidikan C", 17:"Sekolah disabilitas", 60:"Diploma (D1,D2,D3)", 61:"S1", 62:"S2", 63:"S3", 72:"Madrasah Ibtidaiyah", 73:"Madrasah Tsanawiyah", 74:"Madrasah Aliyah", 90:"TK", 95:"Lainnya"}
         satuank_opt = {9999:"", 4: "Minggu", 5: "Bulan"}
         ukuran_opt = {9999:"", 1: "Sangat besar", 2: "Besar", 3:"Normal", 4:"Kecil", 5:"Sangat kecil"}
@@ -424,16 +426,14 @@ elif choice == "Prediksi":
         st.markdown(""" #### DATA AYAH """)
         tinggi_badan_ayah = st.number_input("Tinggi badan Ayah (cm)", min_value = 0.0, max_value = 200.0, step = 1.0)
         apakah_bekerja_ayah = st.selectbox("Apakah Ayah bekerja?", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
-        ayah1, ayah2 = st.columns(2)
-        pendidikan_ayah = ayah1.selectbox("Pendidikan terakhir Ayah", options=list(pend_opt.keys()), format_func=lambda x: pend_opt.get(x))
+        pendidikan_ayah = st.selectbox("Pendidikan terakhir Ayah", options=list(pend_opt.keys()), format_func=lambda x: pend_opt.get(x))
         apakah_kebiasaan_merokok_sampai_sekarang = st.selectbox("Apakah sekarang memiliki kebiasaan merokok?", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
         st.markdown(""" --- """)
 
         st.markdown(""" #### DATA IBU """)
         tinggi_badan_ibu = st.number_input("Tinggi badan Ibu (cm)", min_value = 0.0, max_value = 200.0, step = 1.0)
         apakah_bekerja_ibu = st.selectbox("Apakah Ibu bekerja?", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
-        ibu1, ibu2 = st.columns(2)
-        pendidikan_ibu = ibu1.selectbox("Pendidikan terakhir Ibu", options=list(pend_opt.keys()), format_func=lambda x: pend_opt.get(x))
+        pendidikan_ibu = st.selectbox("Pendidikan terakhir Ibu", options=list(pend_opt.keys()), format_func=lambda x: pend_opt.get(x))
         st.markdown(""" ###### Pengobatan Ibu """)
         # pengobatan_anemia = st.selectbox("Pengobatan anemia", ["Iya", "Tidak"], index = 0)
         # pengobatan_hipertensi = st.selectbox("Pengobatan hipertensi", ["Iya", "Tidak"], index = 0)
@@ -504,9 +504,18 @@ elif choice == "Prediksi":
             dataframe['umur_sekarang'] = 0
             #convert true false to 1 / 0
             check = ['apakah_anak_imunisasi_bcg','apakah_anak_Imunisasi_polio','apakah_anak_imunisasi_dpt','apakah_anak_imunisasi_campak','apakah_anak_imunisasi_hb',
-           'pengobatan_anemia', 'pengobatan_hipertensi', 'pengobatan_dm', 'anc_berat', 'anc_tinggi', 'anc_td', 'anc_teshb', 'anc_tfu', 'anc_djj', 'anc_pd', 'anc_panggulluar', 'imunisasi_tt']
+            'anc_berat', 'anc_tinggi', 'anc_td', 'anc_teshb', 'anc_tfu', 'anc_djj', 'anc_pd', 'anc_panggulluar', 'imunisasi_tt']
             for col in check:
-                dataframe[col] = dataframe[col].astype(int)
+                if (dataframe[col]==0).any() :
+                    dataframe[col] = np.NaN
+                else :
+                    dataframe[col] = 1
+            pengobatan =['pengobatan_anemia', 'pengobatan_hipertensi', 'pengobatan_dm']
+            for col in pengobatan:
+                if (dataframe[col]==0).any() :
+                    dataframe[col] = np.NaN
+                else :
+                    dataframe[col] = "1.0"
             dataframe['apakah_ada_komplikasi_kehamilan'] = dataframe.apakah_ada_komplikasi_kehamilan.apply(lambda x: ''.join([str(i) for i in x]))
             dataframe['tempat_pemeriksaan_kehamilan'] = dataframe.tempat_pemeriksaan_kehamilan.apply(lambda x: ''.join([str(i) for i in x]))
             #Mengatasi outlier data
@@ -544,6 +553,9 @@ elif choice == "Prediksi":
             'apakah_bekerja_ibu','pendidikan_ibu','apakah_lahir_kembar','apakah_pernah_menyusui','persepsi_ibu_bayi_lebih_besar','tempat_pemeriksaan_kehamilan','apakah_ada_komplikasi_kehamilan']
             for fk in field_kat:
                 dataframe.loc[dataframe[fk] == 9999, fk] = np.NaN #mengubah data yang tidak diketahui
+            field_num = ['tinggi_badan','berat_badan', 'tinggi_badan_ayah','tinggi_badan_ibu','berat_badan_bayi','jumlah_anggota_kel','usia_ibu_melahirkan','usia_makan_pertama_selain_asi', 'frekuensi_anc_tm1','frekuensi_anc_tm2','frekuensi_anc_tm3','jumlah_fe_diminum_selama_hamil','usia_kehamilan_saat_persalinan','usia_minum_air_pertamakali']
+            for fn in field_num:
+                dataframe.loc[dataframe[fn] == 0, fn] = np.NaN #mengubah data yang tidak diketahui
             dataframe.loc[dataframe['pendidikan_ayah'] == 7, 'pendidikan_ayah'] = np.NaN #mengubah data yang tidak menjawab
             dataframe.loc[dataframe['pendidikan_ayah'] == 9, 'pendidikan_ayah'] = np.NaN #mengubah data yang missing
             dataframe.loc[dataframe['pendidikan_ayah'] >= 98, 'pendidikan_ayah'] = np.NaN #mengubah data yang tidak diketahui
@@ -563,6 +575,8 @@ elif choice == "Prediksi":
             dataframe.loc[dataframe['persepsi_ibu_bayi_lebih_besar'] >= 8, 'persepsi_ibu_bayi_lebih_besar'] = np.NaN #mengubah data yang tidak tahu
             dataframe.loc[dataframe['tempat_pemeriksaan_kehamilan'] == '99', 'tempat_pemeriksaan_kehamilan'] = np.nan #mengubah data yang tidak tahu
             dataframe.loc[dataframe['tempat_pemeriksaan_kehamilan'] == 'Z', 'tempat_pemeriksaan_kehamilan'] = np.NaN #mengubah data yang missing
+            dataframe.loc[dataframe['apakah_ada_komplikasi_kehamilan'] == '', 'apakah_ada_komplikasi_kehamilan'] = np.NaN #mengubah data yang missing
+            dataframe.loc[dataframe['tempat_pemeriksaan_kehamilan'] == '', 'tempat_pemeriksaan_kehamilan'] = np.NaN #mengubah data yang missing
             dataframe.loc[dataframe['apakah_pernah_menyusui'] >= 8, 'apakah_pernah_menyusui'] = np.NaN #mengubah data yang tidak diketahui & missing
             dataframe.loc[dataframe['anc_berat'] >= 8, 'anc_berat'] = np.NaN #mengubah data yang tidak diketahui
             dataframe.loc[dataframe['anc_tinggi'] >= 8, 'anc_tinggi'] = np.NaN #mengubah data yang tidak diketahui
@@ -629,6 +643,7 @@ elif choice == "Prediksi":
                 if col not in dataframe:
                     dataframe[col] = 0
             dataframe = dataframe[processed_columns]
+            # st.write(dataframe)
 
             #Normalisasi
             scaler = load(open('scaler.pkl', 'rb'))
@@ -641,8 +656,8 @@ elif choice == "Prediksi":
             # #Load model
             model = load_model('model/model.hdf5')
             # Apply model to make predictions
+            # st.write(model.predict(dataframe))
             prediction = (model.predict(dataframe)>=0.5).astype(int)
-            # probabilitas = model.predict(dataframe) * 100
             if prediction == 0:
                 prediction = 'Tidak Stunting'
                 st.success("Hasil prediksi : " + prediction )
@@ -751,6 +766,8 @@ elif choice == "Prediksi":
             dataframe.loc[dataframe['tempat_pemeriksaan_kehamilan'] == '8', 'tempat_pemeriksaan_kehamilan'] = 'V' #menyamakan kategori data other
             dataframe.loc[dataframe['tempat_pemeriksaan_kehamilan'] == 'H', 'tempat_pemeriksaan_kehamilan'] = 'V' #menyamakan kategori data other
             
+            dataframe['umur_sekarang'] = 0
+
             #Mengatasi missing value
             #numerik normal
             num1 = ['tinggi_badan','berat_badan', 'tinggi_badan_ayah','tinggi_badan_ibu','berat_badan_bayi']

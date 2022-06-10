@@ -4,6 +4,10 @@
     height: 50%;
 }
 
+p, ol, ul, dl{
+    font-size: 1.2rem;
+}
+
 /* Move block container higher */
 div.block-container.css-18e3th9.egzxvld2 {
     margin-top: -1em;
