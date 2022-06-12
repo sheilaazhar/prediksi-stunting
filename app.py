@@ -41,7 +41,6 @@ st.markdown(f"""
     unsafe_allow_html=True,
 )
 
-# st.title("Form Prediksi Stunting")
 menu = ["Home","Pelatihan Model","Prediksi"]
 choice = st.sidebar.selectbox("Menu", menu)
 
@@ -408,19 +407,14 @@ elif choice == "Prediksi":
         usia_minum_air_pertamakali = minum1.number_input("Usia minum air pertama kali", min_value = 0, step = 1)
         satuan_usia_minum_air = minum2.selectbox("Satuan usia minum", options=list(satuanm_opt.keys()), format_func=lambda x: satuanm_opt.get(x))
         apakah_anak_minum_vitA_6bln_terakhir = st.selectbox("Apakah anak minum vitamin A dalam 6 bulan terakhir?", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
-        st.markdown(""" ###### Imunisasi """)
-        # apakah_anak_imunisasi_bcg = st.selectbox("Apakah anak sudah diimunisasi BCG?", ["Iya", "Tidak"], index = 0)
-        # apakah_anak_Imunisasi_polio = st.selectbox("Apakah anak sudah diimunisasi Polio?", ["Iya", "Tidak"], index = 0)
-        # apakah_anak_imunisasi_dpt = st.selectbox("Apakah anak sudah diimunisasi DPT?", ["Iya", "Tidak"], index = 0)
-        # apakah_anak_imunisasi_campak = st.selectbox("Apakah anak sudah diimunisasi Campak?", ["Iya", "Tidak"], index = 0)
-        # apakah_anak_imunisasi_hb = st.selectbox("Apakah anak sudah diimunisasi Hepatitis B?", ["Iya", "Tidak"], index = 0)
-        bcg, dpt, hb = st.columns(3)
-        polio, campak, vaksin = st.columns(3)
-        apakah_anak_imunisasi_bcg = bcg.checkbox("BCG")
-        apakah_anak_Imunisasi_polio = polio.checkbox("Polio")
-        apakah_anak_imunisasi_dpt = dpt.checkbox("DPT")
-        apakah_anak_imunisasi_campak = campak.checkbox("Campak")
-        apakah_anak_imunisasi_hb = hb.checkbox("Hepatitis B")
+        st.markdown(""" ##### Imunisasi """)
+        bcg, polio, dpt = st.columns(3)
+        campak, hb, vaksin = st.columns(3)
+        apakah_anak_imunisasi_bcg = bcg.selectbox("BCG", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        apakah_anak_Imunisasi_polio = polio.selectbox("Polio", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        apakah_anak_imunisasi_dpt = dpt.selectbox("DPT", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        apakah_anak_imunisasi_campak = campak.selectbox("Campak", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        apakah_anak_imunisasi_hb = hb.selectbox("Hepatitis B", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
         st.markdown(""" --- """)
 
         st.markdown(""" #### DATA AYAH """)
@@ -434,13 +428,10 @@ elif choice == "Prediksi":
         tinggi_badan_ibu = st.number_input("Tinggi badan Ibu (cm)", min_value = 0.0, max_value = 200.0, step = 1.0)
         apakah_bekerja_ibu = st.selectbox("Apakah Ibu bekerja?", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
         pendidikan_ibu = st.selectbox("Pendidikan terakhir Ibu", options=list(pend_opt.keys()), format_func=lambda x: pend_opt.get(x))
-        st.markdown(""" ###### Pengobatan Ibu """)
-        # pengobatan_anemia = st.selectbox("Pengobatan anemia", ["Iya", "Tidak"], index = 0)
-        # pengobatan_hipertensi = st.selectbox("Pengobatan hipertensi", ["Iya", "Tidak"], index = 0)
-        # pengobatan_dm = st.selectbox("Pengobatan dm", ["Iya", "Tidak"], index = 0)
-        pengobatan_anemia = st.checkbox("Anemia")
-        pengobatan_hipertensi = st.checkbox("Hipertensi")
-        pengobatan_dm = st.checkbox("Diabetes Melitus")
+        anemia, hiper, dm = st.columns(3)
+        pengobatan_anemia = anemia.selectbox("Pengobatan Anemia", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        pengobatan_hipertensi = hiper.selectbox("Pengobatan Hipertensi", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        pengobatan_dm = dm.selectbox("Pengobatan Diabetes Melitus", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
         usia_ibu_melahirkan = st.number_input("Usia ibu saat persalinan", min_value = 0, max_value = 100, step = 1)
         usiak, usias = st.columns(2)
         usia_kehamilan_saat_persalinan = usiak.number_input("Usia kehamilan ibu saat persalinan", min_value = 0, max_value = 50, step = 1)
@@ -455,26 +446,19 @@ elif choice == "Prediksi":
         frekuensi_anc_tm1 = tm1.number_input("Frekuensi ANC TM1", min_value = 0, step = 1)
         frekuensi_anc_tm2 = tm2.number_input("Frekuensi ANC TM2", min_value = 0, step = 1)
         frekuensi_anc_tm3 = tm3.number_input("Frekuensi ANC TM3", min_value = 0, step = 1)
-        # anc_berat = st.selectbox("Apakah diukur berat badan ketika ANC?", ["Iya", "Tidak"], index = 0)
-        # anc_tinggi = st.selectbox("Apakah diukur tinggi badan ketika ANC?", ["Iya", "Tidak"], index = 0)
-        # anc_td = st.selectbox("Apakah diukur td ketika ANC?", ["Iya", "Tidak"], index = 0)
-        # anc_teshb = st.selectbox("Apakah ditest HB ketika ANC?", ["Iya", "Tidak"], index = 0)
-        # anc_tfu = st.selectbox("Apakah diukur tfu ketika ANC?", ["Iya", "Tidak"], index = 0)
-        # anc_djj = st.selectbox("Apakah diukur detak jantung ketika ANC?", ["Iya", "Tidak"], index = 0)
-        # anc_pd = st.selectbox("Apakah diukur pd ketika ANC?", ["Iya", "Tidak"], index = 0)
-        st.markdown(""" ###### Pelayanan ANC """)
-        berat, td, tfu = st.columns(3)
-        tinggi, teshb, djj = st.columns(3)
-        pd, panggul, tt = st.columns(3)
-        anc_berat = berat.checkbox('Ditimbang')
-        anc_tinggi = tinggi.checkbox('Diukur tinggi badan')
-        anc_td = td.checkbox("Cek tekanan darah")
-        anc_teshb = teshb.checkbox("Cek haemoglobin")
-        anc_tfu = tfu.checkbox("Diukur janin")
-        anc_djj = djj.checkbox("Cek detak jantung janin")
-        anc_pd = pd.checkbox("Pemeriksaan internal")
-        anc_panggulluar = panggul.checkbox("Diukur panggul luar")
-        imunisasi_tt = tt.checkbox("Imunisasi TT (Tetanus)")
+        st.markdown(""" ##### Pelayanan ANC """)
+        berat, tinggi, td = st.columns(3)
+        hb, tfu, djj = st.columns(3)
+        pd, pl, tt = st.columns(3)
+        anc_berat = berat.selectbox("Ditimbang", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        anc_tinggi = tinggi.selectbox("Diukur tinggi badan", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        anc_td = td.selectbox("Cek tekanan darah", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        anc_teshb = hb.selectbox("Cek haemoglobin", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        anc_tfu = tfu.selectbox("Diukur janin", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        anc_djj = djj.selectbox("Cek detak jantung janin", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        anc_pd = pd.selectbox("Pemeriksaan internal", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        anc_panggulluar = pl.selectbox("Diukur panggul luar", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        imunisasi_tt = tt.selectbox("Imunisasi TT (tetanus)", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
         st.markdown(""" --- """)
 
         st.markdown(""" #### DATA LINGKUNGAN RUMAH """)
@@ -485,7 +469,7 @@ elif choice == "Prediksi":
         
         # submit_button = st.form_submit_button("Prediksi")
         
-        if st.button("Submit"):
+        if st.button("Prediksi"):
             import pandas as pd
             #Memasukkan isi form kedalam dataframe
             data = {'tinggi_badan': tinggi_badan,'berat_badan': berat_badan,'berat_badan_bayi': berat_badan_bayi, 'jenis_kelamin': jenis_kelamin,
@@ -502,20 +486,6 @@ elif choice == "Prediksi":
             'tempat_buang_air_besar':tempat_buang_air_besar, 'tempat_pembuangan_limbah':tempat_pembuangan_limbah, 'tempat_pembuangan_sampah':tempat_pembuangan_sampah}
             dataframe = dataframe.append(data, ignore_index=True)
             dataframe['umur_sekarang'] = 0
-            #convert true false to 1 / 0
-            check = ['apakah_anak_imunisasi_bcg','apakah_anak_Imunisasi_polio','apakah_anak_imunisasi_dpt','apakah_anak_imunisasi_campak','apakah_anak_imunisasi_hb',
-            'anc_berat', 'anc_tinggi', 'anc_td', 'anc_teshb', 'anc_tfu', 'anc_djj', 'anc_pd', 'anc_panggulluar', 'imunisasi_tt']
-            for col in check:
-                if (dataframe[col]==0).any() :
-                    dataframe[col] = np.NaN
-                else :
-                    dataframe[col] = 1
-            pengobatan =['pengobatan_anemia', 'pengobatan_hipertensi', 'pengobatan_dm']
-            for col in pengobatan:
-                if (dataframe[col]==0).any() :
-                    dataframe[col] = np.NaN
-                else :
-                    dataframe[col] = "1.0"
             dataframe['apakah_ada_komplikasi_kehamilan'] = dataframe.apakah_ada_komplikasi_kehamilan.apply(lambda x: ''.join([str(i) for i in x]))
             dataframe['tempat_pemeriksaan_kehamilan'] = dataframe.tempat_pemeriksaan_kehamilan.apply(lambda x: ''.join([str(i) for i in x]))
             #Mengatasi outlier data
@@ -550,7 +520,8 @@ elif choice == "Prediksi":
             #mengatasi data yang tidak diketahui
             dataframe.loc[dataframe['jumlah_anggota_kel'] == 0, 'jumlah_anggota_kel'] = np.NaN
             field_kat = ['jenis_kelamin','apakah_anak_minum_vitA_6bln_terakhir','pendidikan_ayah','apakah_bekerja_ayah','sumber_air_minum_utama', 'tempat_buang_air_besar', 'tempat_pembuangan_limbah', 'tempat_pembuangan_sampah', 
-            'apakah_bekerja_ibu','pendidikan_ibu','apakah_lahir_kembar','apakah_pernah_menyusui','persepsi_ibu_bayi_lebih_besar','tempat_pemeriksaan_kehamilan','apakah_ada_komplikasi_kehamilan']
+            'apakah_bekerja_ibu','pendidikan_ibu','apakah_lahir_kembar','apakah_pernah_menyusui','persepsi_ibu_bayi_lebih_besar','tempat_pemeriksaan_kehamilan','apakah_ada_komplikasi_kehamilan','apakah_anak_imunisasi_bcg','apakah_anak_Imunisasi_polio','apakah_anak_imunisasi_dpt','apakah_anak_imunisasi_campak','apakah_anak_imunisasi_hb',
+            'anc_berat', 'anc_tinggi', 'anc_td', 'anc_teshb', 'anc_tfu', 'anc_djj', 'anc_pd', 'anc_panggulluar', 'imunisasi_tt','pengobatan_anemia','pengobatan_hipertensi','pengobatan_dm']
             for fk in field_kat:
                 dataframe.loc[dataframe[fk] == 9999, fk] = np.NaN #mengubah data yang tidak diketahui
             field_num = ['tinggi_badan','berat_badan', 'tinggi_badan_ayah','tinggi_badan_ibu','berat_badan_bayi','jumlah_anggota_kel','usia_ibu_melahirkan','usia_makan_pertama_selain_asi', 'frekuensi_anc_tm1','frekuensi_anc_tm2','frekuensi_anc_tm3','jumlah_fe_diminum_selama_hamil','usia_kehamilan_saat_persalinan','usia_minum_air_pertamakali']
@@ -656,7 +627,6 @@ elif choice == "Prediksi":
             # #Load model
             model = load_model('model/model.hdf5')
             # Apply model to make predictions
-            # st.write(model.predict(dataframe))
             prediction = (model.predict(dataframe)>=0.5).astype(int)
             if prediction == 0:
                 prediction = 'Tidak Stunting'
@@ -664,9 +634,6 @@ elif choice == "Prediksi":
             else :
                 prediction = 'Stunting'
                 st.warning("Hasil prediksi : " + prediction )
-
-            # st.success(nama_anak + f"{jenis_kelamin} {format_func(jenis_kelamin)} diprediksi TIDAK STUNTING ketika usia 7 tahun" + "\n" + "Dengan probabilitas stunting : 25%")
-            # st.write(dataframe)
 
     else :
         st.markdown(
@@ -824,28 +791,22 @@ elif choice == "Prediksi":
             # Apply model to make predictions
             prediction = (model.predict(X_dataframe)>=0.5).astype(int)
             prediction = np.reshape(prediction, (prediction.shape[0]))
-            # probabilitas = model.predict(X_dataframe) * 100
-            # probabilitas = np.reshape(probabilitas, (probabilitas.shape[0]))
             dataset = pd.read_excel(uploaded_file)
             hasil_pred = pd.DataFrame({'pidlink': dataframe['pidlink'], 'prediksi': prediction})
             hasil_pred.loc[(hasil_pred['prediksi'] == 0), 'prediksi'] = 'Tidak Stunting'
             hasil_pred.loc[(hasil_pred['prediksi'] == 1), 'prediksi'] = 'Stunting'
             hasil = pd.merge(dataset, hasil_pred, how="left", on='pidlink')
             st.subheader('Hasil Prediksi')
-            hasil_csv = hasil.to_csv().encode('utf-8')
-            st.download_button(
-                "Download hasil prediksi",
-                hasil_csv,
-                "hasil_prediksi.csv",
-                "text/csv",
-                key='download-csv'
-            )
+            hasil_excel = hasil.to_excel("hasil_prediksi.xlsx")
+            with open("hasil_prediksi.xlsx", "rb") as fp:
+                st.download_button(
+                    label="Download hasil prediksi",
+                    data=fp,
+                    file_name="hasil_prediksi.xlsx",
+                )
             col1, col2 = st.columns(2)
             with col1:
                 st.write(hasil_pred)
             with col2:
                 jumlah = hasil["prediksi"].value_counts()
                 st.write(jumlah)
-                # chart = plt.figure(figsize = (5, 5))
-                # sns.countplot(y = "prediksi", data = hasil)
-                # st.pyplot(chart)
