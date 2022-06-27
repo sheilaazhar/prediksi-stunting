@@ -59,8 +59,10 @@ if choice == "Home":
         st.write(' ')
     st.markdown('''
     <p align = "justify">Stunting telah lama menjadi isu prioritas nasional akibat tingginya prevalensi stunting di Indonesia. Berdasarkan data Riskesdas, angka stunting di Indonesia memang telah mengalami penurunan dari tahun ke tahun, yaitu dari 37,2 persen (2013), 30,8 persen (2018), 27,7 persen (2019), dan menjadi 24,4 persen (2021). Namun angka ini masih jauh dari total presentase standar World Health Organization (WHO), yaitu maksimal 20 persen. Sehingga pemerintah memiliki target menurunkan angka stunting menjadi 14% di tahun 2024.
-Penelitian ini bertujuan untuk membuat model yang dapat memprediksi stunting pada balita yang diharapkan dapat membantu untuk mencegah terjadinya stunting. Dalam memprediksi stunting, digunakan sebuah algoritma deep learning, yaitu Long Short Term Memory (LSTM).
-Data yang digunakan pada penelitian ini diambil dari data Indonesia Family Life Survey (IFLS) gelombang 1, 3, 4, dan 5. Untuk menghasilkan model yang optimal, dilakukan pengujian hyperparameter pada jumlah lapisan LSTM sebanyak 1, 2, dan 3 lapis. Lalu jumlah unit LSTM sebanyak 16, 32, dan 64. Pengujian tersebut menghasilkan model paling optimal dengan jumlah lapisan LSTM sebanyak 1 lapis, jumlah unit LSTM sebanyak 32, optimizer RMSprop, activation sigmoid, learning rate 0.001, dropout 0.5, batch size 32, dan max epoch 100. Model LSTM dievaluasi menggunakan 10-fold cross validation dan menghasilkan rata-rata f1-score 76,22%.
+</p>
+    <p align = "justify">Aplikasi ini dapat digunakan untuk memprediksi stunting pada balita 0 tahun di usia 7 tahun nantinya menggunakan algoritma deep learning, yaitu Long Short Term Memory (LSTM). Sehingga aplikasi ini diharapkan dapat membantu untuk mencegah terjadinya stunting melalui pemberian intervensi dini yang tepat pada balita yang memiliki potensi mengalami stunting.
+</p>
+    <p align = "justify">Data yang digunakan dalam pembangunan model ini diambil dari data Indonesia Family Life Survey (IFLS) gelombang 1, 3, 4, dan 5. Untuk menghasilkan model yang optimal, dilakukan pengujian hyperparameter pada jumlah lapisan LSTM sebanyak 1, 2, dan 3 lapis. Lalu jumlah unit LSTM sebanyak 16, 32, dan 64. Pengujian tersebut menghasilkan model paling optimal dengan jumlah lapisan LSTM sebanyak 1 lapis, jumlah unit LSTM sebanyak 32, optimizer RMSprop, activation sigmoid, learning rate 0.001, dropout 0.5, batch size 32, dan max epoch 100. Model LSTM dievaluasi menggunakan 10-fold cross validation dan menghasilkan rata-rata f1-score 76,22%.
 </p>
     ''',unsafe_allow_html=True)
 
@@ -130,7 +132,7 @@ elif choice == "Pelatihan Model":
         dataset.loc[dataset['tinggi_badan'] > 100, 'tinggi_badan'] = np.NaN #mengubah data tidak logis
         dataset.loc[dataset['tinggi_badan'] < 20, 'tinggi_badan'] = np.NaN #mengubah dataset tidak logis
         dataset.loc[dataset['berat_badan'] == 0, 'berat_badan'] = np.NaN #mengubah data tidak logis
-        dataset.loc[dataset['berat_badan'] > 100, 'berat_badan'] = np.NaN
+        dataset.loc[dataset['berat_badan'] > 20, 'berat_badan'] = np.NaN
         dataset.loc[dataset['tinggi_badan_ayah'] > 200, 'tinggi_badan_ayah'] = np.NaN #mengubah data yang tidak logis
         dataset.loc[dataset['tinggi_badan_ayah'] == 0, 'tinggi_badan_ayah'] = np.NaN #mengubah data tidak logis
         dataset.loc[dataset['tinggi_badan_ayah'] < 100, 'tinggi_badan_ayah'] = np.NaN #mengubah data tidak logis
@@ -291,15 +293,6 @@ elif choice == "Pelatihan Model":
             a2.metric("Precision", prec_avg + "%")
             a3.metric("Recall", rec_avg + "%")
             a4.metric("F1-score", fs_avg + "%")
-            # st.write('Test Accuracy : {}'.format(np.mean(test_acc)))
-            # st.write('Test Precision : {}'.format(np.mean(test_prec)))
-            # st.write('Test Recall: {}'.format(np.mean(test_rec)))
-            # st.write('Test F1-score: {}'.format(np.mean(test_fs)))
-            # st.write('Test accuracy of each fold - {}'.format(test_acc))
-            # st.write('Test precision of each fold - {}'.format(test_prec))
-            # st.write('Test recall of each fold - {}'.format(test_rec))
-            # st.write('Test f1-score of each fold - {}'.format(test_fs))
-            # st.write('\n')
             cf = plt.figure(figsize = (2, 2))
             sns.heatmap((np.mean(conf_matrix, axis=0)),  cmap= 'PuBu', annot=True, fmt='g', annot_kws={'size':10})
             plt.xlabel('Prediksi', fontsize=8)
@@ -308,13 +301,6 @@ elif choice == "Pelatihan Model":
             # plt.show();
             p1, p2, p3 = st.columns(3)
             p2.pyplot(cf)
-            # st.write('Confusion Matrix of each fold: {}', conf_matrix)
-            # for i in range(len(conf_matrix)):
-            #     sns.heatmap(conf_matrix[i],  cmap= 'PuBu', annot=True, fmt='g', annot_kws={'size':10})
-            #     plt.xlabel('predicted', fontsize=8)
-            #     plt.ylabel('actual', fontsize=8)
-            #     plt.title("Confusion Matrix", fontsize=8)
-            #     plt.show();
 
         #reshape to 3D
         def reshape_data(X, y=None):
@@ -436,7 +422,7 @@ elif choice == "Prediksi":
         usiak, usias = st.columns(2)
         usia_kehamilan_saat_persalinan = usiak.number_input("Usia kehamilan ibu saat persalinan", min_value = 0, max_value = 50, step = 1)
         satuan_usia_kehamilan = usias.selectbox("Satuan usia kehamilan", options=list(satuank_opt.keys()), format_func=lambda x: satuank_opt.get(x))
-        apakah_lahir_kembar = st.selectbox("Melahirkan tunggal/kembar?", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
+        apakah_lahir_kembar = st.selectbox("Apakah melahirkan kembar?", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
         persepsi_ibu_bayi_lebih_besar = st.selectbox("Persepsi ibu ukuran bayi", options=list(ukuran_opt.keys()), format_func=lambda x: ukuran_opt.get(x))
         apakah_pernah_menyusui = st.selectbox("Apakah pernah menyusui?", options=list(iyatidak_opt.keys()), format_func=lambda x: iyatidak_opt.get(x))
         jumlah_fe_diminum_selama_hamil = st.number_input("Jumlah tablet FE yang diminum selama hamil", min_value = 0, step = 1)
@@ -500,7 +486,7 @@ elif choice == "Prediksi":
             dataframe.loc[dataframe['tinggi_badan'] > 100, 'tinggi_badan'] = np.NaN #mengubah data tidak logis
             dataframe.loc[dataframe['tinggi_badan'] < 20, 'tinggi_badan'] = np.NaN #mengubah dataframe tidak logis
             dataframe.loc[dataframe['berat_badan'] == 0, 'berat_badan'] = np.NaN #mengubah data tidak logis
-            dataframe.loc[dataframe['berat_badan'] > 100, 'berat_badan'] = np.NaN
+            dataframe.loc[dataframe['berat_badan'] > 20, 'berat_badan'] = np.NaN
             dataframe.loc[dataframe['tinggi_badan_ayah'] > 200, 'tinggi_badan_ayah'] = np.NaN #mengubah data yang tidak logis
             dataframe.loc[dataframe['tinggi_badan_ayah'] == 0, 'tinggi_badan_ayah'] = np.NaN #mengubah data tidak logis
             dataframe.loc[dataframe['tinggi_badan_ayah'] < 100, 'tinggi_badan_ayah'] = np.NaN #mengubah data tidak logis
